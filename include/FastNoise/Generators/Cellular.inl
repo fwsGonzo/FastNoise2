@@ -52,8 +52,8 @@ class FastSIMD::DispatchClass<CellularValue, SIMD> final : public virtual Cellul
             for( int yi = 0; yi < 3; yi++ )
             {
                 int32v hash = HashPrimesHB( seed, xc, yc );
-                float32v xd = FS::Convert<float>( hash & int32v( 0x7ff ) ) - float32v( 0x7ff / 2.0f );
-                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 21 ) ) - float32v( 0x7ff / 2.0f );
+                float32v xd = FS::Convert<float>( hash & int32v( 0xffff ) ) - float32v( 0xffff / 2.0f ); // PATCH: old fork 16-bit offset (was 0x7ff)
+                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 16 ) ) - float32v( 0xffff / 2.0f ); // PATCH: was shift 21
 
                 float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, yd * yd ) );
                 xd = FS::FMulAdd( xd, invMag, xcf );
@@ -139,8 +139,8 @@ class FastSIMD::DispatchClass<CellularValue, SIMD> final : public virtual Cellul
                 {
                     int32v hash = HashPrimesHB( seed, xc, yc, zc );
                     float32v xd = FS::Convert<float>( hash & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v yd = FS::Convert<float>( ( hash >> 11 ) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v zd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 22 ) ) - float32v( 0x3ff / 2.0f );
+                    float32v yd = FS::Convert<float>( ( hash >> 10 ) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: was shift 11
+                    float32v zd = FS::Convert<float>( ( hash >> 20 ) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: old fork (was shift 22 zero-extend)
                 
                     float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, FS::FMulAdd( yd, yd, zd * zd ) ) );
                     xd = FS::FMulAdd( xd, invMag, xcf );
@@ -328,8 +328,8 @@ class FastSIMD::DispatchClass<CellularDistance, SIMD> final : public virtual Cel
             for ( int yi = 0; yi < 3; yi++ )
             {
                 int32v hash = HashPrimesHB( seed, xc, yc );
-                float32v xd = FS::Convert<float>( hash & int32v( 0x7ff ) ) - float32v( 0x7ff / 2.0f );
-                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 21 ) ) - float32v( 0x7ff / 2.0f );
+                float32v xd = FS::Convert<float>( hash & int32v( 0xffff ) ) - float32v( 0xffff / 2.0f ); // PATCH: old fork 16-bit offset (was 0x7ff)
+                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 16 ) ) - float32v( 0xffff / 2.0f ); // PATCH: was shift 21
 
                 float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, yd * yd ) );
                 xd = FS::FMulAdd( xd, invMag, xcfOffset );
@@ -402,8 +402,8 @@ class FastSIMD::DispatchClass<CellularDistance, SIMD> final : public virtual Cel
                 {
                     int32v hash = HashPrimesHB( seed, xc, yc, zc );
                     float32v xd = FS::Convert<float>( hash & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v yd = FS::Convert<float>( (hash >> 11) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v zd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 22 ) ) - float32v( 0x3ff / 2.0f );
+                    float32v yd = FS::Convert<float>( (hash >> 10) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: was shift 11
+                    float32v zd = FS::Convert<float>( ( hash >> 20 ) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: old fork (was shift 22 zero-extend)
 
                     float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, FS::FMulAdd( yd, yd, zd * zd ) ) );
                     xd = FS::FMulAdd( xd, invMag, xcfOffset );
@@ -601,8 +601,8 @@ class FastSIMD::DispatchClass<CellularLookup, SIMD> final : public virtual Cellu
             for( int yi = 0; yi < 3; yi++ )
             {
                 int32v hash = HashPrimesHB( seed, xc, yc );
-                float32v xd = FS::Convert<float>( hash & int32v( 0x7ff ) ) - float32v( 0x7ff / 2.0f );
-                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 21 ) ) - float32v( 0x7ff / 2.0f );
+                float32v xd = FS::Convert<float>( hash & int32v( 0xffff ) ) - float32v( 0xffff / 2.0f ); // PATCH: old fork 16-bit offset (was 0x7ff)
+                float32v yd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 16 ) ) - float32v( 0xffff / 2.0f ); // PATCH: was shift 21
 
                 float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, yd * yd ) );
                 float32v localCellX = FS::FMulAdd( xd, invMag, xcf );
@@ -674,8 +674,8 @@ class FastSIMD::DispatchClass<CellularLookup, SIMD> final : public virtual Cellu
                 {
                     int32v hash = HashPrimesHB( seed, xc, yc, zc );
                     float32v xd = FS::Convert<float>( hash & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v yd = FS::Convert<float>( (hash >> 11) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f );
-                    float32v zd = FS::Convert<float>( FS::BitShiftRightZeroExtend( hash, 22 ) ) - float32v( 0x3ff / 2.0f );
+                    float32v yd = FS::Convert<float>( (hash >> 10) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: was shift 11
+                    float32v zd = FS::Convert<float>( ( hash >> 20 ) & int32v( 0x3ff ) ) - float32v( 0x3ff / 2.0f ); // PATCH: old fork (was shift 22 zero-extend)
 
                     float32v invMag = jitter * FS::InvSqrt( FS::FMulAdd( xd, xd, FS::FMulAdd( yd, yd, zd * zd ) ) );
                     float32v localCellX = FS::FMulAdd( xd, invMag, xcf );

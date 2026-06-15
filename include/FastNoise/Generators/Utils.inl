@@ -5,17 +5,22 @@ namespace FastNoise
 {
     namespace Primes
     {
-        static constexpr int X = (int)0xF797C5C7;
-        static constexpr int Y = (int)0x6C060C89;
-        static constexpr int Z = (int)0x465FD04F;
-        static constexpr int W = (int)0xF7A62279;
+        // PATCH: restored from old fork (0.10.0-alpha, commit 81bfe24) so
+        // worldgen reproduces the pre-upgrade terrain field. v1.1.1 changed these
+        // primes, which alone fully decorrelates the noise (lattice->hash inputs).
+        // Stock v1.1.1 values were: X=0xF797C5C7 Y=0x6C060C89 Z=0x465FD04F W=0xF7A62279
+        static constexpr int X = 501125321;
+        static constexpr int Y = 1136930381;
+        static constexpr int Z = 1720413743;
+        static constexpr int W = 1066037191;
 
         static constexpr int Lookup[] = { X,Y,Z,W };
     }
 
     namespace HashMultiplier
     {
-        static constexpr int A = (int)0xB7E0A5F5;
+        // PATCH: restored old fork mixing constant (was 0xB7E0A5F5 in v1.1.1).
+        static constexpr int A = (int)0x27d4eb2d;
     };
 
     static constexpr double kRoot2 = 1.4142135623730950488016887242097;
